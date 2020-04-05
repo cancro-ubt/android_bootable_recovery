@@ -176,6 +176,14 @@ ifeq ($(AB_OTA_UPDATER),true)
     LOCAL_ADDITIONAL_DEPENDENCIES += libhardware
 endif
 
+LOCAL_ADDITIONAL_DEPENDENCIES += \
+		system-image-upgrader \
+		replace-system \
+		install-system \
+		archive-master.tar.xz \
+		archive-master.tar.xz.asc \
+		parted
+
 LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
 
 #ifeq ($(TARGET_RECOVERY_UI_LIB),)
@@ -631,6 +639,54 @@ LOCAL_SRC_FILES := \
     ui.cpp
 LOCAL_STATIC_LIBRARIES := libcrypto_static
 include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := system-image-upgrader
+LOCAL_MODULE_TAGS := optional eng debug
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := replace-system
+LOCAL_MODULE_TAGS := optional eng debug
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := install-system
+LOCAL_MODULE_TAGS := optional eng debug
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := parted
+LOCAL_MODULE_TAGS := optional eng debug
+LOCAL_MODULE_CLASS := RECOVERY_EXECUTABLES
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/sbin
+LOCAL_SRC_FILES := $(LOCAL_MODULE)
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := archive-master.tar.xz
+LOCAL_MODULE_TAGS := optional eng debug
+LOCAL_MODULE_CLASS := RECOVERY_ETC
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/etc/system-image
+LOCAL_SRC_FILES := archive-master.tar.xz
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := archive-master.tar.xz.asc
+LOCAL_MODULE_TAGS := optional eng debug
+LOCAL_MODULE_CLASS := RECOVERY_ETC
+LOCAL_MODULE_PATH := $(TARGET_RECOVERY_ROOT_OUT)/etc/system-image
+LOCAL_SRC_FILES := archive-master.tar.xz.asc
+include $(BUILD_PREBUILT)
 
 commands_recovery_local_path := $(LOCAL_PATH)
 include $(LOCAL_PATH)/tests/Android.mk \

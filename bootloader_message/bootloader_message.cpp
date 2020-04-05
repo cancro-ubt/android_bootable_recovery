@@ -248,6 +248,11 @@ extern "C" bool write_bootloader_message(const char* options) {
   return write_bootloader_message(boot, &err);
 }
 
+//ubuntu touch
+static const char *UBUNTU_COMMAND_FILE = "/cache/recovery/ubuntu_command";
+static const char *UBUNTU_ARGUMENT = "--update-ubuntu";
+static const char *UBUNTU_UPDATE_SCRIPT = "/sbin/system-image-upgrader";
+
 static const char *COMMAND_FILE = "/cache/recovery/command";
 static const int MAX_ARG_LENGTH = 4096;
 static const int MAX_ARGS = 100;
@@ -300,6 +305,24 @@ get_args(int *argc, char ***argv) {
             printf("Got arguments from boot message\n");
         } else if (boot.recovery[0] != 0 && boot.recovery[0] != 255) {
             printf("Bad boot message\n\"%.20s\"\n", boot.recovery);
+        }
+    }
+
+    //ubuntu touch
+    // ----if that doesn't work, try Ubuntu command file
+    if (*argc <= 1) {
+        FILE *fp = fopen(UBUNTU_COMMAND_FILE, "r");
+        if (fp != NULL) {
+            // there is Ubuntu command file, use it
+            // there is no need to read file content for now
+            fclose(fp);
+            char *argv0 = (*argv)[0];
+            *argv = (char **) malloc(sizeof(char *) * MAX_ARGS);
+            // store arguments
+            (*argv)[0] = argv0;  // use the same program name
+            (*argv)[1] = (char *)UBUNTU_ARGUMENT;
+            *argc = 2;
+            printf("Got arguments from %s\n", UBUNTU_COMMAND_FILE);
         }
     }
 

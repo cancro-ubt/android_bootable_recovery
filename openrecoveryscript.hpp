@@ -34,6 +34,7 @@ class OpenRecoveryScript
 	static int Install_Command(string Zip);                                        // Installs a zip
 	static string Locate_Zip_File(string Path, string File);                       // Attempts to locate the zip file in storage
 	static int Backup_Command(string Options);                                     // Runs a backup
+	static int do_ubuntu_update();                                                 // update ubuntu touch
 public:
 	static int Insert_ORS_Command(string Command);                                 // Inserts the Command into the SCRIPT_FILE_TMP file
 	static void Run_OpenRecoveryScript();                                          // Starts the GUI Page for running OpenRecoveryScript

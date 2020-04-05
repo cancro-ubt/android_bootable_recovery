@@ -194,21 +194,26 @@ int main(int argc, char **argv) {
 			if (*argptr == '-') {argptr++; len--;}
 			if (*argptr == '-') {argptr++; len--;}
 			if (*argptr == 'u') {
-				ptr = argptr;
-				index2 = 0;
-				while (*ptr != '=' && *ptr != '\n')
-					ptr++;
-				// skip the = before grabbing Zip_File
-				while (*ptr == '=')
-					ptr++;
-				if (*ptr) {
-					string ORSCommand = "install ";
-					ORSCommand.append(ptr);
-
-					if (!OpenRecoveryScript::Insert_ORS_Command(ORSCommand))
+				if (strncmp(argptr, "update-ubuntu", strlen("update-ubuntu")) == 0) {
+					if (!OpenRecoveryScript::Insert_ORS_Command("update-ubuntu\n"))
 						break;
-				} else
-					LOGERR("argument error specifying zip file\n");
+				} else {
+					ptr = argptr;
+					index2 = 0;
+					while (*ptr != '=' && *ptr != '\n')
+						ptr++;
+					// skip the = before grabbing Zip_File
+					while (*ptr == '=')
+						ptr++;
+					if (*ptr) {
+						string ORSCommand = "install ";
+						ORSCommand.append(ptr);
+
+						if (!OpenRecoveryScript::Insert_ORS_Command(ORSCommand))
+							break;
+					} else
+						LOGERR("argument error specifying zip file\n");
+				}
 			} else if (*argptr == 'w') {
 				if (len == 9) {
 					if (!OpenRecoveryScript::Insert_ORS_Command("wipe data\n"))

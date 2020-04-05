@@ -57,6 +57,7 @@ extern "C" {
 	#include "gui/gui.h"
 	#include "cutils/properties.h"
 	int TWinstall_zip(const char* path, int* wipe_cache);
+	#include "libcrecovery/common.h"
 }
 
 OpenRecoveryScript::VoidFunction OpenRecoveryScript::call_after_cli_command;
@@ -140,7 +141,13 @@ int OpenRecoveryScript::run_script_file(void) {
 				strncpy(command, script_line, line_len - remove_nl + 1);
 				gui_print("command is: '%s' and there is no value\n", command);
 			}
-			if (strcmp(command, "install") == 0) {
+			if (strcmp(command, "update-ubuntu") == 0) {
+				// Install Zip
+				DataManager::SetValue("tw_action_text2", "Update Ubuntu touch");
+				PartitionManager.Mount_All_Storage();
+				ret_val = do_ubuntu_update();
+				install_cmd = -1;
+			} else if (strcmp(command, "install") == 0) {
 				// Install Zip
 				DataManager::SetValue("tw_action_text2", "Installing Zip");
 				PartitionManager.Mount_All_Storage();
@@ -455,6 +462,21 @@ int OpenRecoveryScript::Insert_ORS_Command(string Command) {
 	return 0;
 }
 
+int OpenRecoveryScript::do_ubuntu_update(){
+        const char *UBUNTU_COMMAND_FILE = "/cache/recovery/ubuntu_command";
+        const char *UBUNTU_UPDATE_SCRIPT = "/sbin/system-image-upgrader";
+        const char *UBUNTU_DEBUG_FILE = "/cache/recovery/ubuntu_debug";
+
+        char tmp[PATH_MAX];
+        if (access(UBUNTU_DEBUG_FILE, F_OK) != -1 )
+          sprintf(tmp, "%s %s &> /cache/ubuntu_updater.log", UBUNTU_UPDATE_SCRIPT, UBUNTU_COMMAND_FILE );
+        else
+          sprintf(tmp, "%s %s", UBUNTU_UPDATE_SCRIPT, UBUNTU_COMMAND_FILE );
+        if (__system(tmp) == 0) {
+                return 0;
+        }
+        return 1;
+}
 int OpenRecoveryScript::Install_Command(string Zip) {
 	// Install zip
 	string ret_string;
